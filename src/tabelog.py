@@ -29,12 +29,7 @@ def convert2prefecture_parameter(prefecture):
 class TabeLog:
     def __init__(self, access_key):
         self._access_key = access_key
-        self._request_url = 'http://api.tabelog.com/Ver2.1/RestaurantSearch/?Key=%s' % self._access_key
         self._search_results = None
-
-    @property
-    def request_url(self):
-        return self._request_url
 
     def search_restaurant(self,
                         lattitude=None,
@@ -48,32 +43,50 @@ class TabeLog:
                         page_num=None,
                         result_datum=None,
                         ):
+        _request_url = 'http://api.tabelog.com/Ver2.1/RestaurantSearch/?Key=%s' % self._access_key
         if lattitude:
-            self._request_url = "%sLatitude=%f" % (self._request_url, float(lattitude))
+            _request_url = "%sLatitude=%f" % (_request_url, float(lattitude))
         if longitude:
-            self._request_url = "%sLongitude=%f" % (self._request_url, float(longitude))
+            _request_url = "%sLongitude=%f" % (_request_url, float(longitude))
         if datum and lattitude and longitude: ### valid if both lattitude and longitude are specified
-            self._request_url = "%sDatum=%s" % (self._request_url, str(datum))
+            _request_url = "%sDatum=%s" % (self._request_url, str(datum))
         if search_range:
-            self._request_url = "%sSearchRange=%s" % (self._request_url, str(search_range))
+            _request_url = "%sSearchRange=%s" % (_request_url, str(search_range))
         if prefecture:
-            self._request_url = "%s&Prefecture=%s" % (self._request_url, str(convert2prefecture_parameter(prefecture)))
+            _request_url = "%s&Prefecture=%s" % (_request_url, str(convert2prefecture_parameter(prefecture)))
         if station:
             query = [('Station', station)]
-            self._request_url = "%s&%s" % (self._request_url, urllib.urlencode(query))
+            _request_url = "%s&%s" % (_request_url, urllib.urlencode(query))
         if result_set:
-            self._request_url = "%s&ResultSet=%s" % (self._request_url, str(result_set))
+            _request_url = "%s&ResultSet=%s" % (_request_url, str(result_set))
         if sort_order:
-            self._request_url = "%s&SortOrder=%s" % (self._request_url, str(sort_order))
+            _request_url = "%s&SortOrder=%s" % (_request_url, str(sort_order))
         if page_num:
-            self._request_url = "%s&PageNum=%d" % (self._request_url, str(page_num))
+            _request_url = "%s&PageNum=%d" % (_request_url, str(page_num))
         if result_datum:
-            self._request_url = "%s&ResultDatum=%d" % (self._request_url, str(result_datum))
-
-        f = urllib2.urlopen(self._request_url)
+            _request_url = "%s&ResultDatum=%d" % (_request_url, str(result_datum))
+        f = urllib2.urlopen(_request_url)
         soup = BeautifulSoup(f.read())
-        self._search_results = soup.findAll('item')
-        return self._search_results
+        _search_results = soup.findAll('item')
+        return _search_results
+
+    def search_review(self, restaurant_cord, sort_order=None, page_num=None):
+        _request_url = 'http://api.tabelog.com/Ver1/ReviewSearch/?Key=%s&Rcd=%d' % (self._access_key, restaurant_cord)
+        if sort_order:
+            _request_url = "%s&SortOrder=%s" % (_request_url, sort_order)
+        if page_num:
+            _request_url = "%s&PageNum=%s" % (_request_url, page_num)
+        f = urllib2.urlopen(_request_url)
+        soup = BeautifulSoup(f.read())
+        _search_results = soup.findAll('item')
+        return _search_results
+
+    def search_restaurant_image(self, restaurant_cord):
+        _request_url = 'http://api.tabelog.com/Ver1/ReviewImageSearch/?Key=%s&Rcd=%d' % (self._access_key, restaurant_cord)
+        f = urllib2.urlopen(_request_url)
+        soup = BeautifulSoup(f.read())
+        _search_results = soup.findAll('item')
+        return _search_results
 
 
 def demo():
@@ -84,6 +97,12 @@ def demo():
     restaurants = tabelog.search_restaurant(prefecture=prefecture, station=station)
     for restaurant in restaurants:
         print restaurant
+    reviews = tabelog.search_review(13004626)
+    for review in reviews:
+        print review
+    images = tabelog.search_restaurant_image(13004626)
+    for img in images:
+        print img
 
 
 if __name__ == '__main__':
