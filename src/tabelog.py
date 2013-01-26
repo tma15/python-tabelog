@@ -29,7 +29,12 @@ def convert2prefecture_parameter(prefecture):
 class TabeLog:
     def __init__(self, access_key):
         self._access_key = access_key
-        self._search_results = None
+
+    def _extract_items(request_url):
+        fd = urllib2.urlopen(request_url)
+        soup = BeautifulSoup(fd.read())
+        _search_results = soup.findAll('item')
+        return _search_results
 
     def search_restaurant(self,
                         lattitude=None,
@@ -65,27 +70,21 @@ class TabeLog:
             _request_url = "%s&PageNum=%d" % (_request_url, str(page_num))
         if result_datum:
             _request_url = "%s&ResultDatum=%d" % (_request_url, str(result_datum))
-        f = urllib2.urlopen(_request_url)
-        soup = BeautifulSoup(f.read())
-        _search_results = soup.findAll('item')
+        _search_results = self._extract_items(_request_url)
         return _search_results
 
     def search_review(self, restaurant_cord, sort_order=None, page_num=None):
-        _request_url = 'http://api.tabelog.com/Ver1/ReviewSearch/?Key=%s&Rcd=%d' % (self._access_key, restaurant_cord)
+        _request_url = 'http://api.tabelog.com/Ver1/ReviewSearch/?Key=%s&Rcd=%d' % (self._access_key, int(restaurant_cord))
         if sort_order:
             _request_url = "%s&SortOrder=%s" % (_request_url, sort_order)
         if page_num:
-            _request_url = "%s&PageNum=%s" % (_request_url, page_num)
-        f = urllib2.urlopen(_request_url)
-        soup = BeautifulSoup(f.read())
-        _search_results = soup.findAll('item')
+            _request_url = "%s&PageNum=%d" % (_request_url, int(page_num))
+        _search_results = self._extract_items(_request_url)
         return _search_results
 
     def search_restaurant_image(self, restaurant_cord):
-        _request_url = 'http://api.tabelog.com/Ver1/ReviewImageSearch/?Key=%s&Rcd=%d' % (self._access_key, restaurant_cord)
-        f = urllib2.urlopen(_request_url)
-        soup = BeautifulSoup(f.read())
-        _search_results = soup.findAll('item')
+        _request_url = 'http://api.tabelog.com/Ver1/ReviewImageSearch/?Key=%s&Rcd=%d' % (self._access_key, int(restaurant_cord))
+        _search_results = self._extract_items(_request_url)
         return _search_results
 
 
