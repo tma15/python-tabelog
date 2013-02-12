@@ -23,15 +23,21 @@ def convert2prefecture_parameter(prefecture):
                       '高知': 'kochi', '福岡': 'fukuoka', '佐賀': 'saga', '長崎': 'nagasaki',
                       '熊本': 'kumamoto', '大分': 'oita', '宮崎': 'miyazaki', '鹿児島': 'kagoshima',
                       '沖縄': 'okinawa', '全国': 'japan'}
-    return prefecture_map[prefecture]
+    try:
+        return prefecture_map[prefecture]
+    except KeyError, err:
+        sys.exit('invalid prefecture name: %s' % prefecture)
 
 
 class TabeLog:
     def __init__(self, access_key):
         self._access_key = access_key
 
-    def _extract_items(request_url):
-        fd = urllib2.urlopen(request_url)
+    def _extract_items(self, request_url):
+        try:
+            fd = urllib2.urlopen(request_url)
+        except urllib2.HTTPError, err:
+            sys.exit(err.read())
         soup = BeautifulSoup(fd.read())
         _search_results = soup.findAll('item')
         return _search_results
