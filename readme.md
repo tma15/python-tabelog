@@ -1,6 +1,13 @@
 python-tabelog
 ====================
 
+Install
+--------------------
+
+    git clone https://github.com/tma15/python-tabelog.git
+    cd python-tabelog
+    python setup.py install
+
 Example
 --------------------
 
