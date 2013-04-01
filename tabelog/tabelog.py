@@ -25,11 +25,11 @@ def convert2prefecture_parameter(prefecture):
                       '沖縄': 'okinawa', '全国': 'japan'}
     try:
         return prefecture_map[prefecture]
-    except KeyError, err:
+    except KeyError:
         sys.exit('invalid prefecture name: %s' % prefecture)
 
 
-class TabeLog:
+class Tabelog:
     def __init__(self, access_key):
         self._access_key = access_key
 
@@ -98,7 +98,7 @@ def demo():
     key = 'Your access key here.'
     prefecture = '東京'
     station = '渋谷'
-    tabelog = TabeLog(key)
+    tabelog = Tabelog(key)
     restaurants = tabelog.search_restaurant(prefecture=prefecture, station=station)
     for restaurant in restaurants:
         print restaurant
