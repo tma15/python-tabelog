@@ -16,5 +16,19 @@ Example
     prefecture = '東京'
     station = '渋谷'
     restaurants = tabelog.search_restaurant(prefecture=prefecture, station=station)
+
     for restaurant in restaurants:
-        print restaurant
+        print 'rcd:', restaurant.rcd
+        print 'name:', restaurant.name
+        print 'url:', restaurant.tabelogurl
+        print 'mobile url:', restaurant.tabelogmobileurl
+        print 'dinner price:', restaurant.dinnerprice
+        print 'lunch price:', restaurant.lunchprice
+        print 'total score:', restaurant.totalscore
+        print 'taste score:', restaurant.tastescore
+        print 'service score:', restaurant.servicescore
+        print 'mood score:', restaurant.moodscore
+        print 'category:', restaurant.category
+        print 'station:', restaurant.station
+        print 'situation:', restaurant.situation
+
