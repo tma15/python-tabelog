@@ -43,7 +43,7 @@ class Tabelog:
         return _search_results
 
     def search_restaurant(self,
-                        lattitude=None,
+                        latitude=None,
                         longitude=None,
                         datum=None,
                         search_range=None,
@@ -55,11 +55,11 @@ class Tabelog:
                         result_datum=None,
                         ):
         _request_url = 'http://api.tabelog.com/Ver2.1/RestaurantSearch/?Key=%s' % self._access_key
-        if lattitude:
-            _request_url = "%sLatitude=%f" % (_request_url, float(lattitude))
+        if latitude:
+            _request_url = "%sLatitude=%f" % (_request_url, float(latitude))
         if longitude:
             _request_url = "%sLongitude=%f" % (_request_url, float(longitude))
-        if datum and lattitude and longitude: ### valid if both lattitude and longitude are specified
+        if datum and latitude and longitude: ### valid if both latitude and longitude are specified
             _request_url = "%sDatum=%s" % (self._request_url, str(datum))
         if search_range:
             _request_url = "%sSearchRange=%s" % (_request_url, str(search_range))
