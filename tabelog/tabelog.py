@@ -26,7 +26,7 @@ def convert2prefecture_parameter(prefecture):
     try:
         return prefecture_map[prefecture]
     except KeyError:
-        sys.exit('invalid prefecture name: %s' % prefecture)
+        sys.exit(f'invalid prefecture name: {prefecture}')
 
 
 class Tabelog:
@@ -54,47 +54,44 @@ class Tabelog:
                         page_num=None,
                         result_datum=None,
                         ):
-        _request_url = 'http://api.tabelog.com/Ver2.1/RestaurantSearch/?Key=%s' % self._access_key
+        _request_url = f'http://api.tabelog.com/Ver2.1/RestaurantSearch/?Key={self._access_key}'
         if latitude:
             _request_url = "%sLatitude=%f" % (_request_url, float(latitude))
         if longitude:
             _request_url = "%sLongitude=%f" % (_request_url, float(longitude))
         if datum and latitude and longitude: ### valid if both latitude and longitude are specified
-            _request_url = "%sDatum=%s" % (self._request_url, str(datum))
+            _request_url = f"{self._request_url}Datum={str(datum)}"
         if search_range:
-            _request_url = "%sSearchRange=%s" % (_request_url, str(search_range))
+            _request_url = f"{_request_url}SearchRange={str(search_range)}"
         if prefecture:
-            _request_url = "%s&Prefecture=%s" % (_request_url, str(convert2prefecture_parameter(prefecture)))
+            _request_url = f"{_request_url}&Prefecture={str(convert2prefecture_parameter(prefecture))}"
         if station:
             query = [('Station', station)]
-            _request_url = "%s&%s" % (_request_url, urllib.urlencode(query))
+            _request_url = f"{_request_url}&{urllib.urlencode(query)}"
         if result_set:
-            _request_url = "%s&ResultSet=%s" % (_request_url, str(result_set))
+            _request_url = f"{_request_url}&ResultSet={str(result_set)}"
         if sort_order:
-            _request_url = "%s&SortOrder=%s" % (_request_url, str(sort_order))
+            _request_url = f"{_request_url}&SortOrder={str(sort_order)}"
         if page_num:
             _request_url = "%s&PageNum=%d" % (_request_url, str(page_num))
         if result_datum:
             _request_url = "%s&ResultDatum=%d" % (_request_url, str(result_datum))
         _search_results = self._extract_items(_request_url)
-        _restaurants = [Restaurant(item) for item in _search_results]
-        return _restaurants
+        return [Restaurant(item) for item in _search_results]
 
     def search_review(self, restaurant_cord, sort_order=None, page_num=None):
         _request_url = 'http://api.tabelog.com/Ver1/ReviewSearch/?Key=%s&Rcd=%d' % (self._access_key, int(restaurant_cord))
         if sort_order:
-            _request_url = "%s&SortOrder=%s" % (_request_url, sort_order)
+            _request_url = f"{_request_url}&SortOrder={sort_order}"
         if page_num:
             _request_url = "%s&PageNum=%d" % (_request_url, int(page_num))
         _search_results = self._extract_items(_request_url)
-        _reviews = [Review(item) for item in _search_results]
-        return _reviews
+        return [Review(item) for item in _search_results]
 
     def search_restaurant_image(self, restaurant_cord):
         _request_url = 'http://api.tabelog.com/Ver1/ReviewImageSearch/?Key=%s&Rcd=%d' % (self._access_key, int(restaurant_cord))
         _search_results = self._extract_items(_request_url)
-        images = [Image(item) for item in _search_results]
-        return images
+        return [Image(item) for item in _search_results]
 
 
 class Restaurant(object):
@@ -116,31 +113,31 @@ class Restaurant(object):
 
     @property
     def rcd(self):
-        if self._rcd == None:
+        if self._rcd is None:
             self._rcd = int(self._soup_item.find('rcd').renderContents())
         return self._rcd
 
     @property
     def name(self):
-        if self._name == None:
+        if self._name is None:
             self._name = self._soup_item.find('restaurantname').renderContents()
         return self._name
 
     @property
     def tabelogurl(self):
-        if self._tabelogurl == None:
+        if self._tabelogurl is None:
             self._tabelogurl = self._soup_item.find('tabelogurl').renderContents()
         return self._tabelogurl
 
     @property
     def tabelogmobileurl(self):
-        if self._tabelogmobileurl == None:
+        if self._tabelogmobileurl is None:
             self._tabelogmobileurl = self._soup_item.find('tabelogmobileurl').renderContents()
         return self._tabelogmobileurl
 
     @property
     def totalscore(self):
-        if self._totalscore == None:
+        if self._totalscore is None:
             self._totalscore = self._soup_item.find('totalscore').renderContents()
             if self._totalscore:
                 self._totalscore = float(self._totalscore)
@@ -148,7 +145,7 @@ class Restaurant(object):
 
     @property
     def tastescore(self):
-        if self._tastescore == None:
+        if self._tastescore is None:
             self._tastescore = self._soup_item.find('tastescore').renderContents()
             if self._tastescore:
                 self._tastescore = float(self._tastescore)
@@ -156,7 +153,7 @@ class Restaurant(object):
 
     @property
     def servicescore(self):
-        if self._servicescore == None:
+        if self._servicescore is None:
             self._servicescore = self._soup_item.find('servicescore').renderContents()
             if self._servicescore:
                 self._servicescore = float(self._servicescore)
@@ -164,7 +161,7 @@ class Restaurant(object):
 
     @property
     def moodscore(self):
-        if self._moodscore == None:
+        if self._moodscore is None:
             self._moodscore = self._soup_item.find('moodscore').renderContents()
             if self._moodscore:
                 self._moodscore = float(self._moodscore)
@@ -172,31 +169,31 @@ class Restaurant(object):
 
     @property
     def situation(self):
-        if self._situation == None:
+        if self._situation is None:
             self._situation = self._soup_item.find('situation').renderContents()
         return self._situation
 
     @property
     def dinnerprice(self):
-        if self._dinnerprice == None:
+        if self._dinnerprice is None:
             self._dinnerprice = self._soup_item.find('dinnerprice').renderContents()
         return self._dinnerprice
 
     @property
     def lunchprice(self):
-        if self._lunchprice == None:
+        if self._lunchprice is None:
             self._lunchprice = self._soup_item.find('lunchprice').renderContents()
         return self._lunchprice
 
     @property
     def category(self):
-        if self._category == None:
+        if self._category is None:
             self._category = self._soup_item.find('category').renderContents()
         return self._category
 
     @property
     def station(self):
-        if self._station == None:
+        if self._station is None:
             self._station = self._soup_item.find('station').renderContents()
         return self._station
 
@@ -221,37 +218,37 @@ class Review(object):
 
     @property
     def nickname(self):
-        if self._nickname == None:
+        if self._nickname is None:
             self._nickname = self._soup_item.find('nickname').renderContents()
         return self._situation
 
     @property
     def visitdate(self):
-        if self._visitdate == None:
+        if self._visitdate is None:
             self._visitdate = self._soup_item.find('visitdate').renderContents()
         return self._situation
 
     @property
     def reviewdate(self):
-        if self._reviewdate == None:
+        if self._reviewdate is None:
             self._reviewdate = self._soup_item.find('reviewdate').renderContents()
         return self._situation
 
     @property
     def usetype(self):
-        if self._usetype == None:
+        if self._usetype is None:
             self._usetype = self._soup_item.find('usetype').renderContents()
         return self._situation
 
     @property
     def situation(self):
-        if self._situation == None:
+        if self._situation is None:
             self._situation = self._soup_item.find('situation').renderContents()
         return self._situation
 
     @property
     def totalscore(self):
-        if self._totalscore == None:
+        if self._totalscore is None:
             self._totalscore = self._soup_item.find('totalscore').renderContents()
             if self._totalscore:
                 self._totalscore = float(self._totalscore)
@@ -259,7 +256,7 @@ class Review(object):
 
     @property
     def tastescore(self):
-        if self._tastescore == None:
+        if self._tastescore is None:
             self._tastescore = self._soup_item.find('tastescore').renderContents()
             if self._tastescore:
                 self._tastescore = float(self._tastescore)
@@ -267,7 +264,7 @@ class Review(object):
 
     @property
     def servicescore(self):
-        if self._servicescore == None:
+        if self._servicescore is None:
             self._servicescore = self._soup_item.find('servicescore').renderContents()
             if self._servicescore:
                 self._servicescore = float(self._servicescore)
@@ -275,7 +272,7 @@ class Review(object):
 
     @property
     def moodscore(self):
-        if self._moodscore == None:
+        if self._moodscore is None:
             self._moodscore = self._soup_item.find('moodscore').renderContents()
             if self._moodscore:
                 self._moodscore = float(self._moodscore)
@@ -283,37 +280,37 @@ class Review(object):
 
     @property
     def situation(self):
-        if self._situation == None:
+        if self._situation is None:
             self._situation = self._soup_item.find('situation').renderContents()
         return self._situation
 
     @property
     def dinnerprice(self):
-        if self._dinnerprice == None:
+        if self._dinnerprice is None:
             self._dinnerprice = self._soup_item.find('pricedinner').renderContents()
         return self._dinnerprice
 
     @property
     def lunchprice(self):
-        if self._lunchprice == None:
+        if self._lunchprice is None:
             self._lunchprice = self._soup_item.find('pricelunch').renderContents()
         return self._lunchprice
 
     @property
     def title(self):
-        if self._title == None:
+        if self._title is None:
             self._title = self._soup_item.find('title').renderContents()
         return self._title
 
     @property
     def pcsiteurl(self):
-        if self._pcsiteurl == None:
+        if self._pcsiteurl is None:
             self._pcsiteurl = self._soup_item.find('pcsiteurl').renderContents()
         return self._title
 
     @property
     def mobilesiteurl(self):
-        if self._mobilesiteurl == None:
+        if self._mobilesiteurl is None:
             self._mobilesiteurl = self._soup_item.find('mobilesiteurl').renderContents()
         return self._title
 
@@ -330,37 +327,37 @@ class Image(object):
 
     @property
     def urls(self):
-        if self._urls == None:
+        if self._urls is None:
             self._urls = self._soup_item.find('imageurls').renderContents()
         return self._urls
 
     @property
     def urlm(self):
-        if self._urlm == None:
+        if self._urlm is None:
             self._urlm = self._soup_item.find('imageurlm').renderContents()
         return self._urlm
 
     @property
     def urll(self):
-        if self._urll == None:
+        if self._urll is None:
             self._urll = self._soup_item.find('imageurll').renderContents()
         return self._urll
 
     @property
     def comment(self):
-        if self._comment == None:
+        if self._comment is None:
             self._comment = self._soup_item.find('imagecomment').renderContents()
         return self._comment
 
     @property
     def pcsiteurl(self):
-        if self._pcsiteurl == None:
+        if self._pcsiteurl is None:
             self._pcsiteurl = self._soup_item.find('pcsiteurl').renderContents()
         return self._pcsiteurl
 
     @property
     def mobilesiteurl(self):
-        if self._mobilesiteurl == None:
+        if self._mobilesiteurl is None:
             self._mobilesiteurl = self._soup_item.find('mobilesiteurl').renderContents()
         return self._mobilesiteurl
 
